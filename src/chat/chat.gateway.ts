@@ -9,7 +9,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
-@WebSocketGateway({cors:false})
+@WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -17,9 +17,10 @@ export class ChatGateway
 
   private logger: Logger = new Logger('AppGateway');
 
-  @SubscribeMessage('message')
+  @SubscribeMessage('sendMessage')
   handleMessage(client: Socket, payload: string): void {
-    this.server.emit('message', payload);
+    
+    this.server.emit('message', { message: payload, id: client.id });
   }
 
   afterInit(server: Server) {
@@ -32,5 +33,6 @@ export class ChatGateway
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+    client.emit('setId', { id: client.id });
   }
 }
