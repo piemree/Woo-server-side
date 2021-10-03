@@ -15,7 +15,7 @@ export class ChatGateway
 {
   @WebSocketServer() private server: Server;
 
-  private logger: Logger = new Logger('AppGateway');
+  private logger: Logger = new Logger('ChatGateway');
 
   @SubscribeMessage('sendMessage')
   handleMessage(client: Socket, payload: string): void {
