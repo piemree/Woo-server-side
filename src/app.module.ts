@@ -12,7 +12,7 @@ import { ChatModule } from './chat/chat.module';
   imports: [
     AuthModule,
     UsersModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/woodb'),
+    MongooseModule.forRoot('mongodb+srv://emodb:emodb@herokutest.mihf4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'),
     ChatModule,
   ],
   controllers: [AppController],
