@@ -8,7 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { Public } from 'src/decorators/public.decorator';
-import { CreateUserDto } from './dto/createUserDto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -25,16 +25,20 @@ export class UsersController {
     return await this.UsersService.findOne(id);
   } 
   
-  @Public()
+/*   @Public()
   @Get('me')
   getProfile(@Request() req: any) {
     return req.user;
   }
+ */
+
+  @Public()
   @Post('create')
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.UsersService.create(createUserDto);
   }
 
+  
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return await this.UsersService.remove(id);

@@ -8,23 +8,28 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-
-@WebSocketGateway({ cors: { origin: process.env.ORIGIN ||'*' } })
+import { Room } from 'src/rooms/rooms.model';
+@WebSocketGateway({ cors: { origin: process.env.ORIGIN || '*' } })
 export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+  implements  OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() private server: Server;
 
   private logger: Logger = new Logger('ChatGateway');
 
   @SubscribeMessage('sendMessage')
-  handleMessage(client: Socket, payload: string): void {
-    
-    this.server.emit('message', { message: payload, id: client.id });
+  handleMessage(
+    client: Socket,
+    payload: { room: Room; message: string },
+  ): void {
+    this.server
+      .to(payload.room.name)
+      .emit('message', { message: payload.message, id: client.id });
   }
 
-  afterInit(server: Server) {
-    this.logger.log('Init');
+  @SubscribeMessage('credentials')
+  getCredentials(client: Socket, payload: any): void {
+    console.log(payload);
   }
 
   handleDisconnect(client: Socket) {

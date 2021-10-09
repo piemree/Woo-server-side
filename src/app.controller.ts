@@ -9,14 +9,14 @@ export class AppController {
   constructor(private authService: AuthService) {}
   @Public()
   @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
+  @Post('login')
   async login(@Request() req: any) {
     return this.authService.login(req.user);
   }
 
   //@UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('user')
   getProfile(@Request() req: any) {
-    return req.user;
+    return {user:req.user};
   }
 }
