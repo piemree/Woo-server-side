@@ -1,14 +1,10 @@
-import { IsArray, IsNotEmpty } from 'class-validator';
-
-interface User {
-  userId: string;
-  username: string;
-}
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRoomDto {
   @IsArray()
-  users: User[];
-  
+  @IsString({ each: true })
+  users: any[];
+
   @IsNotEmpty()
   name: string;
 }

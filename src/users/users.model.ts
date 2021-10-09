@@ -5,7 +5,6 @@ export const UserSchema = new Schema<User>({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  rooms: { type: [], required: false },
 });
 
 UserSchema.pre<User>('save', function (next: Function) {
@@ -28,5 +27,4 @@ export interface User extends Document {
   username: string;
   email: string;
   password: string;
-  rooms:[];
 }

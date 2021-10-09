@@ -1,18 +1,14 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { Room } from 'src/rooms/rooms.model';
-@WebSocketGateway({ cors: { origin: process.env.ORIGIN || '*' } })
-export class ChatGateway
-  implements  OnGatewayConnection, OnGatewayDisconnect
-{
+@WebSocketGateway({ cors: { origin: process.env.ORIGIN || '*' },path:"/socket" })
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() private server: Server;
 
   private logger: Logger = new Logger('ChatGateway');
@@ -20,23 +16,29 @@ export class ChatGateway
   @SubscribeMessage('sendMessage')
   handleMessage(
     client: Socket,
-    payload: { room: Room; message: string },
+    payload: { roomName: string; message: string },
   ): void {
     this.server
-      .to(payload.room.name)
+      .to(payload.roomName)
       .emit('message', { message: payload.message, id: client.id });
+  }
+
+  @SubscribeMessage('joinRoom')
+  joinRoom(client: Socket, roomName:string) {
+    client.join(roomName);
   }
 
   @SubscribeMessage('credentials')
   getCredentials(client: Socket, payload: any): void {
-    console.log(payload);
+    //console.log(payload);
   }
 
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
+  async handleConnection(client: Socket, ...args: any[]) {
+    await client.join('oda1');
     this.logger.log(`Client connected: ${client.id}`);
     client.emit('setId', { id: client.id });
   }
