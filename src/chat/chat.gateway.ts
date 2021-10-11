@@ -7,11 +7,16 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
+import { UsersService } from 'src/users/users.service';
 @WebSocketGateway({ cors: { origin: process.env.ORIGIN || '*' },path:"/socket" })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
   @WebSocketServer() private server: Server;
 
   private logger: Logger = new Logger('ChatGateway');
+
+
+constructor(private readonly userService: UsersService){}
 
   @SubscribeMessage('sendMessage')
   handleMessage(
@@ -25,12 +30,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('joinRoom')
   joinRoom(client: Socket, roomName:string) {
+
     client.join(roomName);
   }
 
   @SubscribeMessage('credentials')
   getCredentials(client: Socket, payload: any): void {
-    //console.log(payload);
+
   }
 
   handleDisconnect(client: Socket) {

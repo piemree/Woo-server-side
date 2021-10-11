@@ -1,10 +1,11 @@
-import {Schema,Document} from 'mongoose';
+import { Schema, Document } from 'mongoose';
 import { genSalt, hash } from 'bcrypt';
 
 export const UserSchema = new Schema<User>({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  rooms: { type: [Schema.Types.ObjectId], ref: 'Room', required: false },
 });
 
 UserSchema.pre<User>('save', function (next: Function) {

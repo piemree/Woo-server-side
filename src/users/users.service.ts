@@ -12,14 +12,30 @@ export class UsersService {
     return await this.userModel.find().exec();
   }
   async findOne(id: string) {
-    return await this.userModel.findById(id).exec()
+    return await this.userModel.findById(id).exec();
   }
   async findByUsername(username: string) {
-    return await this.userModel.findOne({username}).exec()
+    return await this.userModel.findOne({ username }).exec();
   }
   async create(user: CreateUserDto): Promise<User> {
     const newUser = new this.userModel(user);
     return await newUser.save();
+  }
+
+  async findOneAndJoinRoom(userId: string, roomId: string) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $push: { rooms: roomId } },
+      { new: true, useFindAndModify: false },
+    );
+  }
+
+  async findOneAndDeleteRoom(userId: string, roomId: string) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $pullAll: { rooms: [roomId] } },
+      { new: true, useFindAndModify: false },
+    );
   }
 
   async remove(id: string): Promise<User> {
