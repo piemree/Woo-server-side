@@ -8,15 +8,18 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { UsersService } from 'src/users/users.service';
-@WebSocketGateway({ cors: { origin: process.env.ORIGIN || '*' },path:"/socket" })
+import { Room } from 'src/rooms/rooms.model';
+import { ChatService } from './chat.service';
+@WebSocketGateway({
+  cors: { origin: process.env.ORIGIN || '*' },
+  path: '/socket',
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-
   @WebSocketServer() private server: Server;
 
   private logger: Logger = new Logger('ChatGateway');
 
-
-constructor(private readonly userService: UsersService){}
+  constructor(private readonly chatService: ChatService) {}
 
   @SubscribeMessage('sendMessage')
   handleMessage(
@@ -29,15 +32,16 @@ constructor(private readonly userService: UsersService){}
   }
 
   @SubscribeMessage('joinRoom')
-  joinRoom(client: Socket, roomName:string) {
+  async joinRoom(client: Socket, payload: any) {
+    const { user, roomName } = payload;
+    const room = await this.chatService.addUserToRoom(user.username, roomName);
 
-    client.join(roomName);
+    console.log(room);
+    // client.join('name');
   }
 
   @SubscribeMessage('credentials')
-  getCredentials(client: Socket, payload: any): void {
-
-  }
+  getCredentials(client: Socket, payload: any): void {}
 
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);

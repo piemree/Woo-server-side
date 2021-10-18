@@ -9,6 +9,8 @@ import * as mongoose from 'mongoose';
 
 @Injectable()
 export class RoomsService {
+  private rooms: Room[];
+
   constructor(
     @InjectModel('Room') private readonly roomModel: Model<Room>,
     @InjectModel('User') private readonly userModel: Model<User>,
@@ -19,8 +21,8 @@ export class RoomsService {
       return mongoose.Types.ObjectId(id);
     });
 
-    const roomsUsers = await this.userModel.find({_id: { $in: users }});
-      createRoomDto.users = roomsUsers;
+    const roomsUsers = await this.userModel.find({ _id: { $in: users } });
+    createRoomDto.users = roomsUsers;
     const room = new this.roomModel(createRoomDto);
     return await room.save();
   }

@@ -14,10 +14,12 @@ import { RoomsModule } from './rooms/rooms.module';
   imports: [
     AuthModule,
     UsersModule,
-    MongooseModule.forRoot('mongodb+srv://emodb:emodb@herokutest.mihf4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'),
+    MongooseModule.forRoot(
+      'mongodb://localhost/test',
+    ),
     ChatModule,
     ConfigModule.forRoot(),
-    RoomsModule
+    RoomsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

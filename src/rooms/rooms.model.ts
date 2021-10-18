@@ -18,8 +18,8 @@ interface Message {
 }
 
 
-export interface Room extends mongoose.Document {
-  id: string;
+export interface Room  {
+  id?: string;
   name: string;
   users?: User[];
   messages?: Message[];
